@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "../../shared/utils/cn";
+import { isSameCity } from "../../shared/utils/isSameCity";
 
 const DaysItems = () => {
   const [swiper, setSwiper] = useState(null);
@@ -37,15 +38,17 @@ const DaysItems = () => {
 
   const handleChangeVisibility = (id, visibleType) => {
     setWeatherDetails((prev) => ({
-      // type: "current",
-      visibleTypes: [...prev.visibleTypes, visibleType],
       cityId: id,
+
+      visibleTypes:
+        prev.cityId === id
+          ? [...new Set([...prev.visibleTypes, visibleType])]
+          : [visibleType],
     }));
   };
 
   const handleDeleteCity = (id) => {
     setCities((prevCities) => prevCities.filter((city) => city.id !== id));
-
     setWeatherDetails((prevDetails) => {
       if (prevDetails.cityId !== id) {
         return prevDetails;
@@ -56,6 +59,20 @@ const DaysItems = () => {
         visibleTypes: [],
         cityId: null,
       };
+    });
+  };
+
+  const handleRestoreCity = (cityToRestore) => {
+    setCities((prevCities) => {
+      const alreadyExists = prevCities.some((city) =>
+        isSameCity(city, cityToRestore),
+      );
+
+      if (alreadyExists) {
+        return prevCities;
+      }
+
+      return [...prevCities, cityToRestore];
     });
   };
 
@@ -101,6 +118,7 @@ const DaysItems = () => {
               className="w-full mx-auto"
               onVisibleSection={handleChangeVisibility}
               onDeleteCity={handleDeleteCity}
+              onRestoreCity={handleRestoreCity}
             />
           </SwiperSlide>
         ))}

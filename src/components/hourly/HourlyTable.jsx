@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import React, { useId, useMemo } from "react";
+
 import {
   AreaChart,
   Area,
@@ -7,99 +8,247 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
+
 import { formatHourlyLabel } from "../../shared/utils/dateTime";
 
-export default function HourlyTable({ hourlyData = [], timezone = 0 }) {
-  const data = useMemo(() => {
-    return hourlyData.map((item, index, arr) => {
-      const label = formatHourlyLabel(
-        item.dt,
-        timezone,
-        index > 0 ? arr[index - 1].dt : null,
+export default function HourlyTable({
+  hourlyData = [],
+  timezone = 0,
+}) {
+  const gradientId = `temp-fill-${useId().replaceAll(":", "")}`;
+
+  const {
+    data,
+    labelsByDt,
+    yMin,
+    yMax,
+    ticks,
+  } = useMemo(() => {
+    const safeTimezone = Number.isFinite(Number(timezone))
+      ? Number(timezone)
+      : 0;
+
+    const source = Array.isArray(hourlyData)
+      ? hourlyData
+      : [];
+
+    // Убираем битые точки API.
+    const validItems = source.filter((item) => {
+      const dt = Number(item?.dt);
+      const temp = Number(item?.main?.temp);
+
+      return (
+        Number.isFinite(dt) &&
+        Number.isFinite(temp)
       );
-      return {
-        dt: item.dt,
-        temp: Math.round(item.main.temp * 10) / 10, // API уже отдаёт °C (units=metric)
-        timeLabel: label.time, // строка — обязательно для оси X
-        dateLabel: label.date, // строка или null — доп. подпись даты
-      };
     });
+
+    const preparedData = validItems.map(
+      (item, index) => {
+        const dt = Number(item.dt);
+        const temp = Number(item.main.temp);
+
+        const previousDt =
+          index > 0
+            ? Number(validItems[index - 1].dt)
+            : null;
+
+        const label = formatHourlyLabel(
+          dt,
+          safeTimezone,
+          previousDt,
+        );
+
+        return {
+          dt,
+          temp: Math.round(temp * 10) / 10,
+          timeLabel: String(label?.time ?? ""),
+          dateLabel: label?.date
+            ? String(label.date)
+            : null,
+        };
+      },
+    );
+
+    const labels = new Map(
+      preparedData.map((item) => [
+        item.dt,
+        {
+          timeLabel: item.timeLabel,
+          dateLabel: item.dateLabel,
+        },
+      ]),
+    );
+
+    if (!preparedData.length) {
+      return {
+        data: [],
+        labelsByDt: labels,
+        yMin: 0,
+        yMax: 5,
+        ticks: [0, 5],
+      };
+    }
+
+    const temperatures = preparedData.map(
+      (item) => item.temp,
+    );
+
+    const minTemp = Math.min(...temperatures);
+    const maxTemp = Math.max(...temperatures);
+
+    let min =
+      Math.floor((minTemp - 2) / 5) * 5;
+
+    let max =
+      Math.ceil((maxTemp + 2) / 5) * 5;
+
+    if (min === max) {
+      min -= 5;
+      max += 5;
+    }
+
+    const yTicks = [];
+
+    for (let value = min; value <= max; value += 5) {
+      yTicks.push(value);
+    }
+
+    return {
+      data: preparedData,
+      labelsByDt: labels,
+      yMin: min,
+      yMax: max,
+      ticks: yTicks,
+    };
   }, [hourlyData, timezone]);
 
-  const minTemp = data.length ? Math.min(...data.map((d) => d.temp)) : 0;
-  const maxTemp = data.length ? Math.max(...data.map((d) => d.temp)) : 30;
-  const yMin = Math.floor((minTemp - 2) / 5) * 5;
-  const yMax = Math.ceil((maxTemp + 2) / 5) * 5;
-  const ticks = [];
-  for (let t = yMin; t <= yMax; t += 5) ticks.push(t);
+  const renderXAxisTick = ({
+    x,
+    y,
+    payload,
+  }) => {
+    const label = labelsByDt.get(
+      Number(payload?.value),
+    );
 
-  // Кастомный тик оси X: время + дата (если начало нового дня).
-  // dateLabel достаём по index из data через замыкание, а не через dataKey.
-  const renderXAxisTick = (props) => {
-    const { x, y, payload, index } = props;
-    const dateLabel = data[index]?.dateLabel;
+    if (!label) return null;
 
     return (
-      <g transform={`translate(${x},${y})`}>
-        <text x={0} y={0} dy={10} textAnchor="middle" fill="#6b6b6b" fontSize={11}>
-          {payload.value}
+      <g transform={`translate(${x}, ${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={12}
+          textAnchor="middle"
+          fill="#6b6b6b"
+          fontSize={11}
+        >
+          {label.timeLabel}
         </text>
-        {dateLabel && (
-          <text x={0} y={14} dy={10} textAnchor="middle" fill="#6b6b6b" fontSize={11}>
-            {dateLabel}
+
+        {label.dateLabel && (
+          <text
+            x={0}
+            y={0}
+            dy={27}
+            textAnchor="middle"
+            fill="#6b6b6b"
+            fontSize={11}
+          >
+            {label.dateLabel}
           </text>
         )}
       </g>
     );
   };
 
+  if (!data.length) {
+    return (
+      <div
+        className="flex h-[340px] w-full items-center justify-center"
+        style={{ background: "#e6e6e6" }}
+      >
+        No hourly weather data
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
         width: "100%",
         height: 340,
+        minWidth: 0,
         background: "#e6e6e6",
-        padding: "12px 8px 0 0",
         fontFamily:
           "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       }}
     >
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
         <AreaChart
           data={data}
-          margin={{ top: 10, right: 20, left: 0, bottom: 20 }}
+          margin={{
+            top: 15,
+            right: 5,
+            left: 0,
+            bottom: 15,
+          }}
         >
           <defs>
-            <linearGradient id="tempFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f5a94e" stopOpacity={0} />
-              <stop offset="100%" stopColor="#f5a94e" stopOpacity={0} />
+            <linearGradient
+              id={gradientId}
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop
+                offset="0%"
+                stopColor="#f5a94e"
+                stopOpacity={0.3}
+              />
+
+              <stop
+                offset="100%"
+                stopColor="#f5a94e"
+                stopOpacity={0}
+              />
             </linearGradient>
           </defs>
 
           <CartesianGrid
-            vertical={true}
+            vertical
             horizontal={false}
             stroke="#bdbdbd"
-            strokeDasharray="0"
           />
 
           <XAxis
-            dataKey="timeLabel"
+            dataKey="dt"
+            orientation="top"
+            type="category"
             axisLine={false}
             tickLine={false}
             tick={renderXAxisTick}
             interval={0}
-            height={40}
+            height={48}
           />
 
           <YAxis
-            orientation="right"
+            orientation="left"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#6b6b6b", fontSize: 11 }}
-            tickFormatter={(v) => `${v}°C`}
+            width={48}
             domain={[yMin, yMax]}
             ticks={ticks}
+            tick={{
+              fill: "#6b6b6b",
+              fontSize: 11,
+            }}
+            tickFormatter={(value) => `${value}°C`}
           />
 
           <Area
@@ -107,9 +256,13 @@ export default function HourlyTable({ hourlyData = [], timezone = 0 }) {
             dataKey="temp"
             stroke="#f5a94e"
             strokeWidth={2.5}
-            fill="url(#tempFill)"
+            fill={`url(#${gradientId})`}
             dot={false}
-            activeDot={{ r: 4, fill: "#f5a94e", stroke: "#fff" }}
+            activeDot={{
+              r: 4,
+              fill: "#f5a94e",
+              stroke: "#fff",
+            }}
           />
         </AreaChart>
       </ResponsiveContainer>

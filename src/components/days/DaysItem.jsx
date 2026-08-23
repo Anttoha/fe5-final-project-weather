@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Heart,
   // RotateCw,
@@ -11,20 +11,19 @@ import { useCities } from "../../shared/contexts/citiesContext";
 import { RotateCw, CircleCheckBig } from "lucide";
 import { MorphIcon } from "morphicons/react";
 import { useIconActions } from "../../shared/hooks/useIconActions";
-import { HeartIcon } from "@animateicons/react/lucide";
+import { sileo } from "sileo";
 
 const DaysItem = ({
   city,
   className,
   onLike,
   onVisibleSection,
-  onVisibleHourly,
-  onVisibleEightDays,
   onDeleteCity,
+  onRestoreCity,
 }) => {
-  const { states, runAction } = useIconActions();
+  const { runAction, getStatus, } = useIconActions();
 
-  const refreshStatus = states.refresh ?? "idle";
+  const refreshStatus = getStatus("refresh");
 
   const { refreshCity } = useCities();
 
@@ -79,12 +78,18 @@ const DaysItem = ({
         <div className="flex gap-3.5 site-xl:gap-4 items-center">
           <button
             type="button"
-            disabled={refreshStatus === "loading"}
             className="group flex size-6 cursor-pointer items-center justify-center disabled:cursor-wait site-xl:size-7.5"
+            disabled={refreshStatus === "loading"}
             onClick={() =>
               runAction(
                 "refresh",
-                () => Promise.all([refreshCity(city.id), delay(500)]),
+                async () => {
+                  await Promise.all([refreshCity(city.id), delay(500)]);
+
+                  sileo.success({
+                    title: "Successfully updated!",
+                  });
+                },
                 800,
               )
             }
@@ -94,10 +99,12 @@ const DaysItem = ({
               icon={refreshStatus === "success" ? CircleCheckBig : RotateCw}
               className={cn(
                 "h-full w-full select-none text-black",
+
                 refreshStatus === "loading"
                   ? "animate-spin [animation-duration:.5s]"
                   : "transition-transform duration-200",
-                refreshStatus !== "success" && "group-hover:rotate-30"
+
+                refreshStatus !== "success" && "group-hover:rotate-30",
               )}
             />
           </button>
@@ -106,7 +113,7 @@ const DaysItem = ({
             onClick={() => onLike(city.id)}
           >
             <Heart
-            // {/* <HeartIcon size={24} color="#f45b48" */}
+              // {/* <HeartIcon size={24} color="#f45b48" */}
               className={cn(
                 "text-red-400 w-full h-full cursor-pointer select-none group-hover:scale-85 group-active:scale-75 transition-all duration-200",
                 city.isLiked && "fill-red-400 animate-like",
@@ -122,7 +129,29 @@ const DaysItem = ({
         </ButtonBrand>
         <button
           className="size-6 site-xl:size-7.5 flex items-center justify-center group cursor-pointer"
-          onClick={() => onDeleteCity(city.id)}
+          onClick={() => {
+            onDeleteCity(city.id);
+
+            sileo.clear();
+
+            const toastId = sileo.success({
+              title: "Successfully deleted!",
+              description: `Місто ${city.city} було видалено.`,
+
+              button: {
+                title: "Get back",
+                onClick: () => {
+                  onRestoreCity(city);
+                  sileo.dismiss(toastId);
+                },
+              },
+
+              styles: {
+                button:
+                  "bg-white! text-black! rounded-2xl! px-4! cursor-pointer! hover:bg-slate-200! hover:text-slate-900! active:bg-slate-300! active:text-slate-800! transition-all!",
+              },
+            });
+          }}
         >
           <Trash2 className="w-full h-full text-black group-hover:text-red-500 group-hover:rotate-12 group-active:scale-90 transition-all duration-200" />
         </button>

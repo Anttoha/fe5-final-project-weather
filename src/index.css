@@ -41,6 +41,16 @@
   }
 }
 
+@media (max-width: 333px) {
+  [data-sileo-toast] {
+    scale: clamp(
+      0.6,
+      calc(0.8 * (100vw / 333px)),
+      0.8
+    );
+  }
+}
+
 body {
   font-family: var(--font-sans);
 }

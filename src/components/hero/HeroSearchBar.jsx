@@ -1,87 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { useCities } from "../../shared/contexts/citiesContext";
-import { fetchCurrentWeather, searchCities } from "../../shared/api/owmApi.js";
-import { mapWeatherToCity } from "../../shared/utils/mapWeatherToCity.js";
-// import { Search } from "lucide-react";
-import { Search, X, RotateCw, CircleCheckBig } from "lucide";
-
+import React from "react";
+import { Search, X, RotateCw } from "lucide";
 import { MorphIcon } from "morphicons/react";
 
+import { useCities } from "../../shared/contexts/citiesContext";
+import { useCitySearch } from "../../shared/hooks/useCitySearch";
+
 const HeroSearchBar = ({ onAddCity }) => {
-  const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [open, setOpen] = useState(false);
-
   const { cities, maxCities } = useCities();
 
+  const {
+    query,
+    setQuery,
+    searchResults,
+    isAddingCity,
+    selectCity,
+    selectCurrentLocation,
+    clearSearch,
+  } = useCitySearch(onAddCity);
+
   const isSearchActive = query.trim().length > 0;
-
-  const handleSelectCity = async (city) => {
-    try {
-      setIsLoading(true);
-
-      const weatherData = await fetchCurrentWeather({
-        lat: city.lat,
-        lon: city.lon,
-      });
-
-      const newCity = mapWeatherToCity(
-        {
-          id: weatherData.id,
-          city: city.name,
-          country: city.country,
-
-          isLiked: false,
-
-          lat: city.lat,
-          lon: city.lon,
-        },
-        weatherData,
-      );
-
-      onAddCity(newCity);
-
-      setQuery("");
-      setSearchResults([]);
-    } catch (error) {
-      console.error("Error retrieving weather:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const isLimitReached = cities.length >= maxCities;
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (searchResults.length === 0) return;
+    if (!searchResults.length) return;
 
-    handleSelectCity(searchResults[0]);
+    selectCity(searchResults[0]);
   };
-
-  useEffect(() => {
-    if (query.trim().length < 3) {
-      setSearchResults([]);
-      return;
-    }
-
-    const timeoutId = setTimeout(async () => {
-      try {
-        const data = await searchCities(query);
-
-        setSearchResults(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }, 400);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [query]);
-
-  const isLimitReached = cities.length >= maxCities;
 
   return (
     <div className="relative w-full site-xl:max-w-156.25 site-md:max-w-[402px] max-w-[174px]">
@@ -93,7 +39,7 @@ const HeroSearchBar = ({ onAddCity }) => {
           type="text"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          disabled={isLimitReached}
+          disabled={isLimitReached || isAddingCity}
           placeholder={
             isLimitReached ? "Maximum 6 cities" : "Search location..."
           }
@@ -101,24 +47,20 @@ const HeroSearchBar = ({ onAddCity }) => {
         />
 
         <button
-          type="submit"
-          disabled={isLoading || isLimitReached}
+          type="button"
+          disabled={isAddingCity || isLimitReached}
+          onClick={isSearchActive ? clearSearch : selectCurrentLocation}
+          aria-label={isSearchActive ? "Clear search" : "Use my location"}
           className="flex w-[17px] site-md:w-[29px] site-xl:w-[45px] shrink-0 cursor-pointer items-center justify-center border-black bg-brand text-black hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50 border-l-2"
-          onClick={() => {
-            if (isSearchActive) {
-              setQuery("");
-              setSearchResults([]);
-            } else {
-              setQuery("Kyiv");
-            }
-          }}
-          aria-label={isSearchActive ? "Clear search" : "Search Kyiv"}
         >
           <MorphIcon
-            icon={isSearchActive ? X : Search}
-            className="size-2.25 site-md:size-[17px] site-xl:size-[25px]"
+            icon={isAddingCity ? RotateCw : isSearchActive ? X : Search}
+            className={
+              isAddingCity
+                ? "size-2.25 animate-spin site-md:size-[17px] site-xl:size-[25px]"
+                : "size-2.25 site-md:size-[17px] site-xl:size-[25px]"
+            }
           />
-          {/* <Search className="size-3 site-md:size-4 site-xl:size-6.25 stroke-3 site-md:h-5 site-md:w-5" /> */}
         </button>
       </form>
 
@@ -128,7 +70,8 @@ const HeroSearchBar = ({ onAddCity }) => {
             <li key={`${city.lat}-${city.lon}`}>
               <button
                 type="button"
-                onClick={() => handleSelectCity(city)}
+                disabled={isAddingCity}
+                onClick={() => selectCity(city)}
                 className="w-full cursor-pointer px-5 py-3 text-left text-black transition hover:bg-gray-100"
               >
                 {city.name}

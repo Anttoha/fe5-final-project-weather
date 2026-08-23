@@ -94,6 +94,7 @@ export const useCitiesWeather = () => {
       );
     } catch (error) {
       console.error(`Не вдалося оновити ${city.city}:`, error);
+      throw error;
     }
   }, []);
 
