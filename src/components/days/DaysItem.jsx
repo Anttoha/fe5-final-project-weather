@@ -54,7 +54,7 @@ const DaysItem = ({
         </ButtonBrand>
         <ButtonBrand
           className="py-1.5 px-2.75 site-xl:py-2 site-xl:px-4.5"
-          onClick={() => {}}
+          onClick={() => onVisibleSection(city.id, "eight")}
         >
           Weekly forecast
         </ButtonBrand>

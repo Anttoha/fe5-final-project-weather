@@ -180,9 +180,6 @@ export default function HourlyTable({
         width: "100%",
         height: 340,
         minWidth: 0,
-        background: "#e6e6e6",
-        fontFamily:
-          "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       }}
     >
       <ResponsiveContainer

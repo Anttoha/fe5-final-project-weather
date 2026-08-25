@@ -7,6 +7,7 @@ import Current from "./components/current/Current.jsx";
 import Hourly from "./components/hourly/Hourly.jsx";
 import { Toaster } from "sileo";
 import { useMediaQuery } from "./shared/hooks/useMediaQuery.js";
+import Eight from "./components/eight/Eight.jsx";
 
 const App = () => {
   const { weatherDetails } = useCities();
@@ -34,6 +35,7 @@ const isMobile = useMediaQuery("(max-width: 767px)");
         <Days />
         {weatherDetails.visibleTypes.includes("current") && <Current />}
         {weatherDetails.visibleTypes.includes("hourly") && <Hourly />}
+        {weatherDetails.visibleTypes.includes("eight") && <Eight />}
         {/* <Hourly /> */}
       </main>
     </>

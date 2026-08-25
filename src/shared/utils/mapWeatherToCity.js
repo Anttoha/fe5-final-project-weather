@@ -25,7 +25,33 @@ export const mapWeatherToCity = (city, data, forecast = undefined) => ({
   },
   updatedAt: Date.now(),
   forecast: {
-    hourly: forecast?.list ?? [],
-    eightDays: [],
+    hourly: (forecast?.list ?? []).slice(0, 5),
+    eightDays: Object.values(
+      (forecast?.list ?? []).reduce((acc, item) => {
+        const dateStr = item.dt_txt.split(" ")[0];
+        if (!acc[dateStr]) {
+          acc[dateStr] = {
+            dt: item.dt,
+            temps: [],
+            weather: item.weather[0],
+          };
+        }
+        acc[dateStr].temps.push(item.main.temp_max, item.main.temp_min);
+        return acc;
+      }, {}),
+    ).map((day) => {
+      const dateObj = new Date(day.dt * 1000);
+      return {
+        tempMin: Math.round(Math.min(...day.temps)),
+        tempMax: Math.round(Math.max(...day.temps)),
+        description: day.weather.description,
+        day: dateObj.toLocaleDateString("en-US", { weekday: "short" }), // "Fri"
+        date: dateObj.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }), // "Oct 13"
+        codeDate: day.dt, // 1787680800 (числовий timestamp)
+      };
+    }),
   },
 });
