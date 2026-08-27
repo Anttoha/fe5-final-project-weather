@@ -11,64 +11,39 @@ import {
 
 import { formatHourlyLabel } from "../../shared/utils/dateTime";
 
-export default function HourlyTable({
-  hourlyData = [],
-  timezone = 0,
-}) {
+export default function HourlyTable({ hourlyData = [], timezone = 0 }) {
   const gradientId = `temp-fill-${useId().replaceAll(":", "")}`;
 
-  const {
-    data,
-    labelsByDt,
-    yMin,
-    yMax,
-    ticks,
-  } = useMemo(() => {
+  const { data, labelsByDt, yMin, yMax, ticks } = useMemo(() => {
     const safeTimezone = Number.isFinite(Number(timezone))
       ? Number(timezone)
       : 0;
 
-    const source = Array.isArray(hourlyData)
-      ? hourlyData
-      : [];
+    const source = Array.isArray(hourlyData) ? hourlyData : [];
 
     // Убираем битые точки API.
     const validItems = source.filter((item) => {
       const dt = Number(item?.dt);
       const temp = Number(item?.main?.temp);
 
-      return (
-        Number.isFinite(dt) &&
-        Number.isFinite(temp)
-      );
+      return Number.isFinite(dt) && Number.isFinite(temp);
     });
 
-    const preparedData = validItems.map(
-      (item, index) => {
-        const dt = Number(item.dt);
-        const temp = Number(item.main.temp);
+    const preparedData = validItems.map((item, index) => {
+      const dt = Number(item.dt);
+      const temp = Number(item.main.temp);
 
-        const previousDt =
-          index > 0
-            ? Number(validItems[index - 1].dt)
-            : null;
+      const previousDt = index > 0 ? Number(validItems[index - 1].dt) : null;
 
-        const label = formatHourlyLabel(
-          dt,
-          safeTimezone,
-          previousDt,
-        );
+      const label = formatHourlyLabel(dt, safeTimezone, previousDt);
 
-        return {
-          dt,
-          temp: Math.round(temp * 10) / 10,
-          timeLabel: String(label?.time ?? ""),
-          dateLabel: label?.date
-            ? String(label.date)
-            : null,
-        };
-      },
-    );
+      return {
+        dt,
+        temp: Math.round(temp * 10) / 10,
+        timeLabel: String(label?.time ?? ""),
+        dateLabel: label?.date ? String(label.date) : null,
+      };
+    });
 
     const labels = new Map(
       preparedData.map((item) => [
@@ -90,18 +65,14 @@ export default function HourlyTable({
       };
     }
 
-    const temperatures = preparedData.map(
-      (item) => item.temp,
-    );
+    const temperatures = preparedData.map((item) => item.temp);
 
     const minTemp = Math.min(...temperatures);
     const maxTemp = Math.max(...temperatures);
 
-    let min =
-      Math.floor((minTemp - 2) / 5) * 5;
+    let min = Math.floor((minTemp - 2) / 5) * 5;
 
-    let max =
-      Math.ceil((maxTemp + 2) / 5) * 5;
+    let max = Math.ceil((maxTemp + 2) / 5) * 5;
 
     if (min === max) {
       min -= 5;
@@ -123,19 +94,15 @@ export default function HourlyTable({
     };
   }, [hourlyData, timezone]);
 
-  const renderXAxisTick = ({
-    x,
-    y,
-    payload,
-  }) => {
-    const label = labelsByDt.get(
-      Number(payload?.value),
-    );
+  const renderXAxisTick = ({ x, y, payload }) => {
+    const label = labelsByDt.get(Number(payload?.value));
+
+    y -= 30
 
     if (!label) return null;
 
     return (
-      <g transform={`translate(${x}, ${y})`}>
+      <g transform={`translate(${x}, ${y})`} >
         <text
           x={0}
           y={0}
@@ -182,10 +149,7 @@ export default function HourlyTable({
         minWidth: 0,
       }}
     >
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-      >
+      <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
           margin={{
@@ -195,32 +159,10 @@ export default function HourlyTable({
             bottom: 15,
           }}
         >
-          <defs>
-            <linearGradient
-              id={gradientId}
-              x1="0"
-              y1="0"
-              x2="0"
-              y2="1"
-            >
-              <stop
-                offset="0%"
-                stopColor="#f5a94e"
-                stopOpacity={0.3}
-              />
-
-              <stop
-                offset="100%"
-                stopColor="#f5a94e"
-                stopOpacity={0}
-              />
-            </linearGradient>
-          </defs>
-
           <CartesianGrid
-            vertical
-            horizontal={false}
-            stroke="#bdbdbd"
+            strokeWidth={1}
+            horizontalValues={ticks.slice(1, -1)}
+            verticalValues={data.slice(1, -1).map((item) => item.dt)}
           />
 
           <XAxis
@@ -251,15 +193,11 @@ export default function HourlyTable({
           <Area
             type="monotone"
             dataKey="temp"
-            stroke="#f5a94e"
-            strokeWidth={2.5}
-            fill={`url(#${gradientId})`}
+            stroke="#ff9d42"
+            strokeWidth={2}
+            fill="transparent"
             dot={false}
-            activeDot={{
-              r: 4,
-              fill: "#f5a94e",
-              stroke: "#fff",
-            }}
+            activeDot={false}
           />
         </AreaChart>
       </ResponsiveContainer>

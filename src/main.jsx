@@ -5,9 +5,9 @@ import App from './App.jsx'
 import CitiesProvider from './components/CitiesProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <CitiesProvider>
     <App />
     </CitiesProvider>
-  </StrictMode>,
+  // </StrictMode>,
 )

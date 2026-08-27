@@ -8,6 +8,8 @@ import Hourly from "./components/hourly/Hourly.jsx";
 import { Toaster } from "sileo";
 import { useMediaQuery } from "./shared/hooks/useMediaQuery.js";
 import Eight from "./components/eight/Eight.jsx";
+import Pets from "./components/pets/Pets.jsx";
+import Nature from "./components/nature/Nature.jsx";
 
 const App = () => {
   const { weatherDetails } = useCities();
@@ -37,6 +39,8 @@ const isMobile = useMediaQuery("(max-width: 767px)");
         {weatherDetails.visibleTypes.includes("hourly") && <Hourly />}
         {weatherDetails.visibleTypes.includes("eight") && <Eight />}
         {/* <Hourly /> */}
+        <Pets />
+        <Nature />
       </main>
     </>
   );
