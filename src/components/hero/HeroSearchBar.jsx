@@ -33,7 +33,7 @@ const HeroSearchBar = ({ onAddCity }) => {
     <div className="relative w-full site-xl:max-w-156.25 site-md:max-w-[402px] max-w-[174px]">
       <form
         onSubmit={handleSubmit}
-        className="flex h-[15px] site-md:h-[27px] site-xl:h-[42px] w-full overflow-hidden rounded-[10px] bg-box site-xl:h-10.5"
+        className="flex h-[15px] site-md:h-[27px] site-xl:h-[42px] w-full overflow-hidden bg-box site-xl:h-10.5 squircle-50"
       >
         <input
           type="text"

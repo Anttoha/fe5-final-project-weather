@@ -16,6 +16,7 @@ const Pets = () => {
   });
 
   const isLoading = request.status === "loading";
+  const [hasMore, setHasMore] = useState(true);
 
   const loadNews = useCallback(async (currentParams) => {
     setRequest((prev) => ({
@@ -24,17 +25,25 @@ const Pets = () => {
     }));
 
     try {
-      const articles = await sileo.promise(
-        fetchNews(currentParams),
-        {
-          loading: { title: "Loading news..." },
-          success: { title: "News successfully loaded!" },
-          error: { title: "Failed to load news" },
-        }
-      );;
+      const articles = await sileo.promise(fetchNews(currentParams), {
+        loading: { title: "Loading news..." },
+        success: { title: "News successfully loaded!" },
+        error: { title: "Failed to load news" },
+      });
+
+      if (articles.length === 0) {
+        setHasMore(false);
+
+        setRequest({
+          status: "success",
+          error: null,
+        });
+
+        return;
+      }
 
       const validArticles = articles.filter(
-        (article) => article.url && article.title !== "[Removed]",
+        (article) => article?.url && article?.title !== "[Removed]",
       );
 
       setNews((prevNews) => [...prevNews, ...validArticles]);
@@ -72,13 +81,15 @@ const Pets = () => {
 
         <div className="space-y-5">
           <PetsItems news={news} />
-          <button
-            onClick={handleLoadMore}
-            disabled={isLoading}
-            className="rounded-[10px] py-[10px] px-[30px] bg-[#FFB36C] text-black text-[16px] font-medium cursor-pointer hover:opacity-80 transition"
-          >
-            {isLoading ? "Loading..." : "See more"}
-          </button>
+          {hasMore && (
+            <button
+              onClick={handleLoadMore}
+              disabled={isLoading}
+              className="squircle-24 bg-[#FFB36C] px-[30px] py-[10px] text-[16px] font-medium text-black transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isLoading ? "Loading..." : "See more"}
+            </button>
+          )}
         </div>
       </Container>
     </section>

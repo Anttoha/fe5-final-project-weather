@@ -1,10 +1,10 @@
 import React from "react";
+import { cn } from "../../shared/utils/cn";
+import { CircleQuestionMark } from "lucide-react";
 
-const PetsItem = ({article}) => {
+const PetsItem = ({ article }) => {
   return (
-    <li
-      className="w-full max-w-[270px] group hover:opacity-90 transition"
-    >
+    <li className="w-full max-w-[270px] group hover:opacity-90 transition">
       <a
         href={article.url}
         target="_blank"
@@ -12,13 +12,22 @@ const PetsItem = ({article}) => {
         className="relative flex flex-col flex-grow justify-between pb-2 h-full"
       >
         <div className="space-y-5">
-          {article.urlToImage && (
-            <img
-              src={article.urlToImage}
-              alt=""
-              className="w-full h-[208px] object-cover rounded-[10px]"
-            />
-          )}
+          <div
+            className={cn(
+              "w-full h-[208px] rounded-[10px]",
+              !article.urlToImage && "bg-[#8a0000]",
+            )}
+          >
+            {article.urlToImage ? (
+              <img
+                src={article.urlToImage}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <CircleQuestionMark className="text-white mx-auto my-auto h-full w-30" />
+            )}
+          </div>
 
           <h3 className="text-[16px] font-medium">{article.title}</h3>
         </div>

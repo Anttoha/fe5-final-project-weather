@@ -8,9 +8,8 @@ export const fetchNews = async ({ country, page }) => {
       country: country.toLowerCase(),
       apiKey: API_KEY,
       page,
-      pageSize: 5,
+      pageSize: 4,
     },
   });
-
   return data.articles;
 };

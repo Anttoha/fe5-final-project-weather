@@ -54,3 +54,57 @@
 body {
   font-family: var(--font-sans);
 }
+
+.squircle {
+  --smooth-corners: 5;
+
+  mask-image: paint(smooth-corners);
+  -webkit-mask-image: paint(smooth-corners);
+}
+
+/* @utility squircle-* {
+  --smooth-corners: --value(number, [number]);
+
+  mask-image: paint(smooth-corners);
+  -webkit-mask-image: paint(smooth-corners);
+} */
+
+
+@utility squircle-* {
+  border-radius: calc(--value(number) * 1px);
+  border-radius: --value([length], [percentage]);
+
+  corner-shape: squircle;
+}
+
+@utility squircle-t-* {
+  border-top-left-radius: calc(--value(number) * 1px);
+  border-top-right-radius: calc(--value(number) * 1px);
+
+  corner-top-left-shape: squircle;
+  corner-top-right-shape: squircle;
+}
+
+@utility squircle-b-* {
+  border-bottom-left-radius: calc(--value(number) * 1px);
+  border-bottom-right-radius: calc(--value(number) * 1px);
+
+  corner-bottom-left-shape: squircle;
+  corner-bottom-right-shape: squircle;
+}
+
+@utility squircle-l-* {
+  border-top-left-radius: calc(--value(number) * 1px);
+  border-bottom-left-radius: calc(--value(number) * 1px);
+
+  corner-top-left-shape: squircle;
+  corner-bottom-left-shape: squircle;
+}
+
+@utility squircle-r-* {
+  border-top-right-radius: calc(--value(number) * 1px);
+  border-bottom-right-radius: calc(--value(number) * 1px);
+
+  corner-top-right-shape: squircle;
+  corner-bottom-right-shape: squircle;
+}
