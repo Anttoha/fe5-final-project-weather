@@ -5,10 +5,11 @@ import HeroSearchBar from "./HeroSearchBar";
 import { useCities } from "../../shared/contexts/citiesContext";
 import { sileo } from "sileo";
 import { isSameCity } from "../../shared/utils/isSameCity";
+import { MAX_CITIES } from "../../shared/constants/config";
 
 const Hero = () => {
   const { day, weekday, monthYear } = getHeroDate();
-  const { cities, setCities, maxCities } = useCities();
+  const { cities, setCities } = useCities();
 
   const handleAddCity = (newCity) => {
     const isDuplicate = cities.some((city) => isSameCity(city, newCity));
@@ -22,7 +23,7 @@ const Hero = () => {
       return;
     }
 
-    if (cities.length >= maxCities) {
+    if (cities.length >= MAX_CITIES) {
       sileo.clear();
       sileo.warning({
         title: "You can add a maximum of 6 cities.",

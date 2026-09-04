@@ -31,6 +31,12 @@ export const useCitiesWeather = () => {
 
   const citiesRef = useRef(cities);
 
+  const isCityFresh = (city) => {
+    if (!city.updatedAt) return false;
+
+    return Date.now() - city.updatedAt < HALF_HOUR;
+  };
+
   useEffect(() => {
     citiesRef.current = cities;
   }, [cities]);
@@ -42,11 +48,16 @@ export const useCitiesWeather = () => {
 
     const updatedCities = await Promise.all(
       currentCities.map(async (city) => {
+        if (isCityFresh(city)) {
+          return city;
+        }
+
         try {
           const data = await fetchCurrentWeather({
             lat: city.lat,
             lon: city.lon,
           });
+
           const forecast = await fetchWeatherForecast({
             lat: city.lat,
             lon: city.lon,

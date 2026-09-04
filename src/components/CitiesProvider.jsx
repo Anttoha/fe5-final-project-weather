@@ -2,8 +2,7 @@ import React, { useMemo, useState } from "react";
 
 import { CitiesContext } from "../shared/contexts/citiesContext.js";
 import { useCitiesWeather } from "../shared/hooks/useCitiesWeather.js";
-
-const MAX_CITIES = 6;
+import { MAX_CITIES } from "../shared/constants/config.js";
 
 const CitiesProvider = ({ children }) => {
   const { cities, setCities, refreshCities, refreshCity } = useCitiesWeather();
@@ -12,6 +11,9 @@ const CitiesProvider = ({ children }) => {
     type: null,
     visibleTypes: [],
     cityId: null,
+
+    scrollRequest: 0,
+    waitForLayout: false,
   });
 
   const value = useMemo(
@@ -24,8 +26,6 @@ const CitiesProvider = ({ children }) => {
 
       weatherDetails,
       setWeatherDetails,
-
-      maxCities: MAX_CITIES,
     }),
     [cities, refreshCities, refreshCity, weatherDetails],
   );

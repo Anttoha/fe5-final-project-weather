@@ -27,14 +27,27 @@ const DaysItems = () => {
   //   }
 
   const handleChangeVisibility = (id, visibleType) => {
-    setWeatherDetails((prev) => ({
-      cityId: id,
+    setWeatherDetails((prev) => {
+      const isAlreadyVisible =
+        prev.cityId === id && prev.visibleTypes.includes(visibleType);
 
-      visibleTypes:
-        prev.cityId === id
-          ? [...new Set([...prev.visibleTypes, visibleType])]
-          : [visibleType],
-    }));
+      return {
+        cityId: id,
+
+        type: visibleType,
+
+        scrollRequest: (prev.scrollRequest ?? 0) + 1,
+
+        // Если секция уже есть — layout менять не надо,
+        // можно скроллить почти сразу.
+        waitForLayout: !isAlreadyVisible,
+
+        visibleTypes:
+          prev.cityId === id
+            ? [...new Set([...prev.visibleTypes, visibleType])]
+            : [visibleType],
+      };
+    });
   };
 
   const handleDeleteCity = (id) => {

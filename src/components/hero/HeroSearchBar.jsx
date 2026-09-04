@@ -1,12 +1,12 @@
 import React from "react";
 import { Search, X, RotateCw } from "lucide";
 import { MorphIcon } from "morphicons/react";
-
 import { useCities } from "../../shared/contexts/citiesContext";
 import { useCitySearch } from "../../shared/hooks/useCitySearch";
+import { MAX_CITIES } from "../../shared/constants/config";
 
 const HeroSearchBar = ({ onAddCity }) => {
-  const { cities, maxCities } = useCities();
+  const { cities } = useCities();
 
   const {
     query,
@@ -19,7 +19,7 @@ const HeroSearchBar = ({ onAddCity }) => {
   } = useCitySearch(onAddCity);
 
   const isSearchActive = query.trim().length > 0;
-  const isLimitReached = cities.length >= maxCities;
+  const isLimitReached = cities.length >= MAX_CITIES;
 
   const handleSubmit = (event) => {
     event.preventDefault();

@@ -22,6 +22,8 @@ const PetsItem = ({ article }) => {
               <img
                 src={article.urlToImage}
                 alt=""
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             ) : (

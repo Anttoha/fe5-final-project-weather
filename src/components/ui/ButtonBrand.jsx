@@ -7,7 +7,7 @@ const ButtonBrand = ({ children, className, onClick }) => {
       onClick={onClick}
       className={cn(
         'relative overflow-hidden squircle-15 site-xl:squircle-25 text-[9px] site-xl:text-[10px] font-medium px-4 py-2 cursor-pointer',
-        'text-white hover:text-black active:scale-90 active:duration-75 transition-all duration-300',
+        'text-white hover:text-black hover:scale-95 active:scale-90 active:duration-75 transition-all duration-300',
         'bg-brand',
 
         'before:absolute before:inset-0 before:bg-box',
@@ -17,7 +17,6 @@ const ButtonBrand = ({ children, className, onClick }) => {
         className
       )}
     >
-      {/* Обертка для текста с z-10 */}
       <span className="relative z-10">{children}</span>
     </button>
   )

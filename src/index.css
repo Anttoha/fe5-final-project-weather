@@ -55,20 +55,6 @@ body {
   font-family: var(--font-sans);
 }
 
-.squircle {
-  --smooth-corners: 5;
-
-  mask-image: paint(smooth-corners);
-  -webkit-mask-image: paint(smooth-corners);
-}
-
-/* @utility squircle-* {
-  --smooth-corners: --value(number, [number]);
-
-  mask-image: paint(smooth-corners);
-  -webkit-mask-image: paint(smooth-corners);
-} */
-
 
 @utility squircle-* {
   border-radius: calc(--value(number) * 1px);

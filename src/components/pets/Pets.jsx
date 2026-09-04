@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Container from "../ui/Container";
 import { fetchNews } from "../../shared/api/newsApi";
 import PetsItems from "./PetsItems";
-import { sileo } from "sileo";
+import { useNearViewport } from "../../shared/hooks/useNearViewport";
 
 const Pets = () => {
   const [news, setNews] = useState([]);
@@ -18,6 +18,8 @@ const Pets = () => {
   const isLoading = request.status === "loading";
   const [hasMore, setHasMore] = useState(true);
 
+  const [sectionRef, shouldLoad] = useNearViewport("0px 0px -150px 0px");
+
   const loadNews = useCallback(async (currentParams) => {
     setRequest((prev) => ({
       status: "loading",
@@ -25,11 +27,7 @@ const Pets = () => {
     }));
 
     try {
-      const articles = await sileo.promise(fetchNews(currentParams), {
-        loading: { title: "Loading news..." },
-        success: { title: "News successfully loaded!" },
-        error: { title: "Failed to load news" },
-      });
+      const articles = await fetchNews(currentParams);
 
       if (articles.length === 0) {
         setHasMore(false);
@@ -62,8 +60,10 @@ const Pets = () => {
   }, []);
 
   useEffect(() => {
+    if (!shouldLoad) return;
+
     loadNews(paramsInfo);
-  }, [paramsInfo, loadNews]);
+  }, [shouldLoad, paramsInfo, loadNews]);
 
   const handleLoadMore = () => {
     if (isLoading) return;
@@ -75,11 +75,11 @@ const Pets = () => {
   };
 
   return (
-    <section className="pb-20">
+    <section ref={sectionRef} className="pb-20">
       <Container className="space-y-10">
         <h2 className="text-[20px] font-medium">Interacting with our pets</h2>
 
-        <div className="space-y-5">
+        <div className="min-h-[360px] space-y-5">
           <PetsItems news={news} />
           {hasMore && (
             <button

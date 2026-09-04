@@ -21,7 +21,6 @@ export default function HourlyTable({ hourlyData = [], timezone = 0 }) {
 
     const source = Array.isArray(hourlyData) ? hourlyData : [];
 
-    // Убираем битые точки API.
     const validItems = source.filter((item) => {
       const dt = Number(item?.dt);
       const temp = Number(item?.main?.temp);

@@ -2,16 +2,12 @@ import React, { useState } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow } from "swiper/modules";
-
+import "swiper/css";
+import "swiper/css/effect-coverflow";
 import NatureItem from "./NatureItem";
 import SwiperNavigation from "../ui/SwiperNavigation";
 
-const NatureItems = ({
-  items,
-  onLoadMore,
-  isLoading,
-  hasMore,
-}) => {
+const NatureItems = ({ items, onLoadMore, isLoading, hasMore }) => {
   const [swiper, setSwiper] = useState(null);
 
   const updateOpacity = (swiperInstance) => {
@@ -27,13 +23,12 @@ const NatureItems = ({
       }
 
       slide.style.opacity = opacity;
-      slide.style.pointerEvents =
-        opacity > 0 ? "auto" : "none";
+      slide.style.pointerEvents = opacity > 0 ? "auto" : "none";
     });
   };
 
   return (
-    <div className="relative w-full site-xl:w-200 mx-auto py-10">
+    <div className="relative w-full site-xl:w-245 mx-auto py-10">
       <Swiper
         modules={[EffectCoverflow]}
         effect="coverflow"
@@ -49,8 +44,11 @@ const NatureItems = ({
           updateOpacity(swiperInstance);
         }}
         onSetTranslate={updateOpacity}
-        onReachEnd={() => {
-          if (!isLoading && hasMore) {
+        onReachEnd={(swiperInstance) => {
+          const isActuallyNearEnd =
+            swiperInstance.activeIndex >= items.length - 2;
+
+          if (isActuallyNearEnd && !isLoading && hasMore) {
             onLoadMore();
           }
         }}
@@ -65,7 +63,7 @@ const NatureItems = ({
         {items.map((slide) => (
           <SwiperSlide
             key={slide.id}
-            className="h-50! w-75! will-change-[opacity,transform]"
+            className="h-[200px]! w-full! site-md:h-[200px]! site-md:w-[300px]! site-xl:h-[211px]! site-xl:w-[384px]! will-change-[opacity,transform]"
           >
             <NatureItem item={slide} />
           </SwiperSlide>
@@ -74,11 +72,7 @@ const NatureItems = ({
 
       <SwiperNavigation swiper={swiper} />
 
-      {isLoading && (
-        <p className="mt-4 text-center">
-          Загрузка...
-        </p>
-      )}
+      {isLoading && <p className="mt-4 text-center">Loading...</p>}
     </div>
   );
 };

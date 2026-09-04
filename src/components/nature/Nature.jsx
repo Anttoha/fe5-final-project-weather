@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Container from "../ui/Container";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
 import NatureItems from "./NatureItems";
 import { fetchPixabay } from "../../shared/api/pixabayApi";
+import { useNearViewport } from "../../shared/hooks/useNearViewport";
 
 const PER_PAGE = 12;
 
@@ -14,8 +11,9 @@ const Nature = () => {
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [sectionRef, shouldLoad] = useNearViewport("0px 0px -150px 0px");
 
-  const loadFirstPage = async () => {
+  const loadFirstPage = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -26,18 +24,19 @@ const Nature = () => {
       });
 
       setItems(data.hits);
-
       setHasMore(data.hits.length < data.totalHits);
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
+    if (!shouldLoad) return;
+
     loadFirstPage();
-  }, []);
+  }, [shouldLoad, loadFirstPage]);
 
   const loadMore = async () => {
     if (isLoading || !hasMore) return;
@@ -68,7 +67,7 @@ const Nature = () => {
   };
 
   return (
-    <section className="pb-12 w-full">
+    <section ref={sectionRef} className="pb-12 w-full">
       <Container className="w-full">
         <h2 className="text-[20px] font-medium">Beautiful nature</h2>
 

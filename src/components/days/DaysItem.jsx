@@ -21,7 +21,7 @@ const DaysItem = ({
   onDeleteCity,
   onRestoreCity,
 }) => {
-  const { runAction, getStatus, } = useIconActions();
+  const { runAction, getStatus } = useIconActions();
 
   const refreshStatus = getStatus("refresh");
 
@@ -32,7 +32,7 @@ const DaysItem = ({
   return (
     <div
       className={cn(
-        "w-full max-w-full site-md:max-w-[262px] site-xl:max-w-[320px] bg-panel rounded-[20px] pt-3.75 px-3.75 pb-5 site-md:pt-3 site-md:px-4.25 site-md:pb-4.25 site-xl:pt-3.75 site-xl:pb-5 site-xl:px-5 shrink-0",
+        "w-full max-w-full site-md:max-w-[262px] site-xl:max-w-[320px] bg-panel pt-3.75 px-3.75 pb-5 site-md:pt-3 site-md:px-4.25 site-md:pb-4.25 site-xl:pt-3.75 site-xl:pb-5 site-xl:px-5 shrink-0 squircle-40",
         className,
       )}
     >
@@ -65,11 +65,14 @@ const DaysItem = ({
         <p className="text-left">{city?.date?.day || ""}</p>
       </div>
       <div className="flex flex-col gap-6.25 site-xl:gap-3.75 items-center mb-11 site-md:mb-8.5 site-xl:mb-9.5">
-        <img
+        {/* <img
           src={weatherIcon(city?.description)}
           alt={city?.description}
           className="w-full max-w-20.75 max-h-20.75 site-md:max-w-19 site-md:max-h-19 site-xl:max-w-30 site-xl:max-h-30 h-full object-cover"
-        />
+        /> */}
+        <svg className="w-full max-w-20.75 max-h-20.75 site-md:max-w-19 site-md:max-h-19 site-xl:max-w-30 site-xl:max-h-30 h-full object-cover">
+          <use href={`/symbol-defs.svg${weatherIcon(city?.description)}`} />
+        </svg>
         <h2 className="text-[24px] site-xl:text-[32px] font-medium">
           {city?.temperature?.celsius ?? ""} ℃
         </h2>
@@ -109,6 +112,13 @@ const DaysItem = ({
             />
           </button>
           <button
+            type="button"
+            aria-label={
+              city.isLiked
+                ? `Remove ${city.city} from favorites`
+                : `Add ${city.city} to favorites`
+            }
+            aria-pressed={city.isLiked}
             className="size-6 site-xl:size-7.5 flex items-center justify-center group cursor-pointer"
             onClick={() => onLike(city.id)}
           >
@@ -128,6 +138,8 @@ const DaysItem = ({
           See more
         </ButtonBrand>
         <button
+          type="button"
+          aria-label={`Delete ${city.city}`}
           className="size-6 site-xl:size-7.5 flex items-center justify-center group cursor-pointer"
           onClick={() => {
             onDeleteCity(city.id);
@@ -136,7 +148,7 @@ const DaysItem = ({
 
             const toastId = sileo.success({
               title: "Successfully deleted!",
-              description: `Місто ${city.city} було видалено.`,
+              description: `The city ${city.city} has been deleted.`,
 
               button: {
                 title: "Get back",
