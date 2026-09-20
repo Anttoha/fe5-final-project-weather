@@ -14,6 +14,7 @@ const Pets = () => {
     page: 1,
     country: "us",
   });
+  const [error, setError] = useState(null);
 
   const isLoading = request.status === "loading";
   const [hasMore, setHasMore] = useState(true);
@@ -55,6 +56,7 @@ const Pets = () => {
       setRequest((prev) => ({
         status: "error",
         error,
+        message: error.message || "An unexpected error occurred.",
       }));
     }
   }, []);
@@ -80,8 +82,15 @@ const Pets = () => {
         <h2 className="text-[20px] font-medium">Interacting with our pets</h2>
 
         <div className="min-h-[360px] space-y-5">
-          <PetsItems news={news} />
-          {hasMore && (
+          {request.status === "error" && (
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-600">
+              <p className="mt-1 text-sm">{request.message}</p>
+            </div>
+          )}
+
+          {news.length > 0 && <PetsItems news={news} />}
+
+          {request.status === "success" && hasMore && (
             <button
               onClick={handleLoadMore}
               disabled={isLoading}

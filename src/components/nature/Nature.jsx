@@ -9,13 +9,23 @@ const PER_PAGE = 12;
 const Nature = () => {
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [request, setRequest] = useState({
+    status: "idle",
+    error: null,
+    message: null,
+  });
+  const isLoading = request.status === "loading";
   const [hasMore, setHasMore] = useState(true);
   const [sectionRef, shouldLoad] = useNearViewport("0px 0px -150px 0px");
 
   const loadFirstPage = useCallback(async () => {
+    setRequest({
+      status: "loading",
+      error: null,
+      message: null,
+    });
+
     try {
-      setIsLoading(true);
 
       const data = await fetchPixabay({
         query: "nature",
@@ -25,10 +35,19 @@ const Nature = () => {
 
       setItems(data.hits);
       setHasMore(data.hits.length < data.totalHits);
+      setRequest({
+        status: "success",
+        error: null,
+        message: null,
+      });
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsLoading(false);
+
+      setRequest({
+        status: "error",
+        error,
+        message: error.message || "An error occurred while loading.",
+      });
     }
   }, []);
 
@@ -40,10 +59,14 @@ const Nature = () => {
 
   const loadMore = async () => {
     if (isLoading || !hasMore) return;
+    setRequest((prev) => ({
+      ...prev,
+      status: "loading",
+      error: null,
+      message: null,
+    }));
 
     try {
-      setIsLoading(true);
-
       const nextPage = page + 1;
 
       const data = await fetchPixabay({
@@ -59,10 +82,19 @@ const Nature = () => {
       });
 
       setPage(nextPage);
+      setRequest({
+        status: "success",
+        error: null,
+        message: null,
+      });
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsLoading(false);
+
+      setRequest({
+        status: "error",
+        error,
+        message: error.message || "Произошла ошибка при дозагрузке",
+      });
     }
   };
 
@@ -71,6 +103,12 @@ const Nature = () => {
       <Container className="w-full">
         <h2 className="text-[20px] font-medium">Beautiful nature</h2>
 
+        {request.status === "error" && (
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-600">
+              <p className="font-semibold">Ошибка загрузки:</p>
+              <p className="mt-1 text-sm">{request.message}</p>
+            </div>
+          )}
         <NatureItems
           items={items}
           onLoadMore={loadMore}

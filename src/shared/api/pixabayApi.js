@@ -7,14 +7,22 @@ export const fetchPixabay = async ({
   page = 1,
   perPage = 12,
 }) => {
-  const { data } = await axios.get("https://pixabay.com/api/", {
-    params: {
-      key: API_KEY,
-      q: query,
-      page: page,
-      per_page: perPage,
-    },
-  });
+  try {
+    const { data } = await axios.get("https://pixabay.com/api/", {
+      params: {
+        key: API_KEY,
+        q: query,
+        page: page,
+        per_page: perPage,
+      },
+    });
 
-  return data;
+    return data;
+  } catch (error) {
+    const errorMessage =
+      typeof error.response?.data === "string"
+        ? error.response.data
+        : error.message || "Ошибка при получении данных от Pixabay";
+    throw new Error(errorMessage);
+  }
 };
