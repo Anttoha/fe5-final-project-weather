@@ -65,7 +65,7 @@ export const useCitiesWeather = () => {
 
           return mapWeatherToCity(city, data, forecast);
         } catch (error) {
-          console.error(`Не вдалося оновити ${city.city}:`, error);
+          console.error(`Failed to update ${city.city}:`, error);
 
           return city;
         }
@@ -79,8 +79,6 @@ export const useCitiesWeather = () => {
     setCities((prevCities) =>
       prevCities.map((city) => citiesByKey.get(cityKey(city)) ?? city),
     );
-
-    console.log("Weather updated:", new Date().toLocaleTimeString());
   }, []);
 
   const refreshCity = useCallback(async (id) => {
@@ -104,7 +102,7 @@ export const useCitiesWeather = () => {
         prevCities.map((city) => (city.id === id ? updatedCity : city)),
       );
     } catch (error) {
-      console.error(`Не вдалося оновити ${city.city}:`, error);
+      console.error(`Failed to update ${city.city}:`, error);
       throw error;
     }
   }, []);

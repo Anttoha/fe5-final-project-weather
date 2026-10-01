@@ -93,7 +93,7 @@ const Nature = () => {
       setRequest({
         status: "error",
         error,
-        message: error.message || "Произошла ошибка при дозагрузке",
+        message: error.message || "An error occurred during the additional download.",
       });
     }
   };
@@ -105,7 +105,7 @@ const Nature = () => {
 
         {request.status === "error" && (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-600">
-              <p className="font-semibold">Ошибка загрузки:</p>
+              <p className="font-semibold">Load error:</p>
               <p className="mt-1 text-sm">{request.message}</p>
             </div>
           )}

@@ -34,8 +34,6 @@ const Hero = () => {
     setCities((prevCities) => [...prevCities, newCity]);
   };
 
-  console.log(cities);
-
   return (
     <section
       className="pt-12.5 pb-25 site-md:py-10 site-xl:py-20 relative w-full bg-cover bg-position-[center_67%]"

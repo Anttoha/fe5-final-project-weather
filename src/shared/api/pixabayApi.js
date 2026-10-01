@@ -22,7 +22,7 @@ export const fetchPixabay = async ({
     const errorMessage =
       typeof error.response?.data === "string"
         ? error.response.data
-        : error.message || "Ошибка при получении данных от Pixabay";
+        : error.message || "Error retrieving data from Pixabay";
     throw new Error(errorMessage);
   }
 };

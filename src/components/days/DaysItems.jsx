@@ -38,8 +38,6 @@ const DaysItems = () => {
 
         scrollRequest: (prev.scrollRequest ?? 0) + 1,
 
-        // Если секция уже есть — layout менять не надо,
-        // можно скроллить почти сразу.
         waitForLayout: !isAlreadyVisible,
 
         visibleTypes:

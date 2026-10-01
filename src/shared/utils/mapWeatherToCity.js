@@ -45,12 +45,12 @@ export const mapWeatherToCity = (city, data, forecast = undefined) => ({
         tempMin: Math.round(Math.min(...day.temps)),
         tempMax: Math.round(Math.max(...day.temps)),
         description: day.weather.description,
-        day: dateObj.toLocaleDateString("en-US", { weekday: "short" }), // "Fri"
+        day: dateObj.toLocaleDateString("en-US", { weekday: "short" }), 
         date: dateObj.toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
-        }), // "Oct 13"
-        codeDate: day.dt, // 1787680800 (числовий timestamp)
+        }),
+        codeDate: day.dt, 
       };
     }),
   },

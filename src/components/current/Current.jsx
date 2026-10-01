@@ -8,8 +8,6 @@ const Current = () => {
 
   const city = cities.find((city) => city.id === weatherDetails.cityId);
 
-  console.log(city);
-
   return (
     <section className="pb-20">
       <Container>

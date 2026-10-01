@@ -7,15 +7,7 @@ import TitleSection from "../TitleSection";
 const Hourly = () => {
   const { cities, weatherDetails } = useCities();
 
-  console.log(cities);
-
   const city = cities.find((city) => city.id === weatherDetails.cityId);
-
-  console.log("Hourly debug:", {
-    cityId: weatherDetails.cityId,
-    city,
-    hourlyData: city?.forecast?.hourly,
-  });
 
   return (
     <section className="pb-8.75 site-md:pb-12.5 site-xl:pb-20">

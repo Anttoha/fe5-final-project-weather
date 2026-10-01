@@ -23,8 +23,6 @@ const AnimatedSection = ({
       });
     };
 
-    // Если DOM сейчас перестраивается —
-    // сначала даём Motion закончить анимацию.
     if (waitForLayout) {
       const timeoutId = window.setTimeout(
         scrollToSection,
@@ -34,8 +32,6 @@ const AnimatedSection = ({
       return () => window.clearTimeout(timeoutId);
     }
 
-    // Секция уже была на странице.
-    // Ждём всего один кадр и скроллим.
     const frameId = requestAnimationFrame(scrollToSection);
 
     return () => cancelAnimationFrame(frameId);
