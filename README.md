@@ -1,16 +1,50 @@
-# React + Vite
+# Weather Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A weather app built with React. Search for cities, save your favourites and see the current weather, a chart of how the weather changes and a daily forecast.
 
-Currently, two official plugins are available:
+**Live demo:** https://fe5-final-project-weather.vercel.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+<!-- Screenshot: in the GitHub editor, drag a screenshot of the site onto the empty line below this comment -->
 
-## React Compiler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- **City search** with the OpenWeatherMap Geocoding API; saved cities stay after a page reload (localStorage)
+- **Weather cards** for several cities at once: local time, temperature, weather icon and buttons to add a city to favourites and manage the card
+- **Detailed data** for the selected city: feels like, min / max temperature, humidity, pressure, wind speed and visibility
+- **Interactive chart** of how the weather changes over time (Recharts)
+- **Daily forecast**: date, weather icon, temperature and description
+- **News cards** (NewsAPI) with a "See more" button
+- **Photo gallery** (Pixabay API) with a slider and a full-size view
+- Responsive layout for mobile, tablet and desktop, animations and toast notifications
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech stack
+
+React 19 · Vite · Tailwind CSS 4 · Context API · Axios · Recharts · Swiper · Motion · ESLint
+
+APIs: OpenWeatherMap (current weather, forecast, geocoding) · NewsAPI · Pixabay
+
+## Run locally
+
+```bash
+git clone https://github.com/Antoha2012pro/fe5-final-project-weather.git
+cd fe5-final-project-weather
+npm install
+cp .env.example .env
+npm run dev
+```
+
+Put your own free API keys from [openweathermap.org](https://openweathermap.org/), [newsapi.org](https://newsapi.org/) and [pixabay.com](https://pixabay.com/api/docs/) into `.env`.
+
+## Known limitations
+
+- The free NewsAPI plan only allows requests from `localhost`, so the news section may not load on the live demo.
+- API keys in `VITE_` variables end up in the browser bundle. A small server-side proxy would be needed to hide them completely.
+
+## About this project
+
+Final project of the Front-End course at GoITeens (module 5). The design was provided by the course as a Figma mockup, and I built it as a responsive React app. I wrote most of the code myself and used AI as a helper for some parts (for example, the hourly chart section).
+
+## Kurz auf Deutsch
+
+Wetter-Dashboard mit React und Vite: Städtesuche, gespeicherte Lieblingsstädte, aktuelles Wetter, ein Diagramm zum Wetterverlauf und eine Tagesvorhersage. Abschlussprojekt meines Front-End-Kurses bei GoITeens. Das Design stammt aus einer Figma-Vorlage des Kurses; den Code habe ich größtenteils selbst geschrieben und bei einigen Teilen KI als Hilfe genutzt.
