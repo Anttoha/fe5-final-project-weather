@@ -1,11 +1,11 @@
+
 # Weather Dashboard
 
 A weather app built with React. Search for cities, save your favourites and see the current weather, a chart of how the weather changes and a daily forecast.
 
 **Live demo:** https://fe5-final-project-weather.vercel.app/
 
-<!-- Screenshot: in the GitHub editor, drag a screenshot of the site onto the empty line below this comment -->
-
+<img width="1920" height="909" alt="Live Website" src="https://github.com/user-attachments/assets/8d93b3c3-e9eb-4e6a-9c97-6a67c4a09e0f" />
 
 ## Features
 
