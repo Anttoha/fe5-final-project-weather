@@ -6,11 +6,9 @@ import CitiesProvider from "./components/CitiesProvider.jsx";
 import ModalProvider from "./components/ModalProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
-  // <StrictMode>
   <CitiesProvider>
     <ModalProvider>
       <App />
     </ModalProvider>
   </CitiesProvider>,
-  // </StrictMode>,
 );

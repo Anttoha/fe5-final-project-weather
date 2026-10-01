@@ -19,13 +19,6 @@ const DaysItems = () => {
     );
   };
 
-  //   const addCity = (city) => {
-  //     setCities(prevCities => ([...prevCities, {
-  //         id: "asdasdasdasd",
-  //         city: city
-  //     }]))
-  //   }
-
   const handleChangeVisibility = (id, visibleType) => {
     setWeatherDetails((prev) => {
       const isAlreadyVisible =
@@ -56,7 +49,6 @@ const DaysItems = () => {
       }
 
       return {
-        // type: null,
         visibleTypes: [],
         cityId: null,
       };

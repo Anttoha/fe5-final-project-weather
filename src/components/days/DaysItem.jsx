@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Heart,
-  // RotateCw,
   Trash2,
 } from "lucide-react";
 import ButtonBrand from "../ui/ButtonBrand";
@@ -123,7 +122,6 @@ const DaysItem = ({
             onClick={() => onLike(city.id)}
           >
             <Heart
-              // {/* <HeartIcon size={24} color="#f45b48" */}
               className={cn(
                 "text-red-400 w-full h-full cursor-pointer select-none group-hover:scale-85 group-active:scale-75 transition-all duration-200",
                 city.isLiked && "fill-red-400 animate-like",
