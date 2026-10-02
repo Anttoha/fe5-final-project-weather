@@ -27,7 +27,7 @@ APIs: OpenWeatherMap (current weather, forecast, geocoding) · NewsAPI · Pixaba
 ## Run locally
 
 ```bash
-git clone https://github.com/Antoha2012pro/fe5-final-project-weather.git
+git clone https://github.com/anttoha/fe5-final-project-weather.git
 cd fe5-final-project-weather
 npm install
 cp .env.example .env
